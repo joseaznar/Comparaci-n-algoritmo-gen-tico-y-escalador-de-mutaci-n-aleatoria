@@ -8,7 +8,6 @@ import java.io.*;
 import java.util.Random;
 
 class Kolmogorov {
-static String temp;
 /*************************************
  *
  *		PARAMETERS
@@ -39,9 +38,9 @@ static String temp;
   static int 	maxG=10000,  minG=1;	// Número de generaciones
   static double	maxW=1, minW=0;		// Valores de W
 //
-  public static String genomaHC;
+  public static String genomaHC;        //valor del genoma para el hill climbing algorithm
   public static	String genoma [];
-  public static double fitnessHC;
+  public static double fitnessHC;       //valor del fitness para la cadena "actual" del hill climbing algorithm
   public static	double fitness[];
   public static	BufferedReader Fbr,Kbr,Tbr;
   
@@ -183,7 +182,8 @@ static String temp;
   
   public static	void PoblacionInicialHillClimber(double fitness) throws	Exception{
 	/*
-	 *Genera EL individuo inicial
+         * Utilizamos el atributo directamente en lugar del parámetro por facilidad, pues está implícito que ese es el parámetro que queremos
+	 * Genera EL individuo inicial para el hill climbing algorithm
 	 */  	
         genomaHC="";
         for (int j=0;j<LG;j++){
@@ -244,7 +244,8 @@ static String temp;
 	return;
   }//endEvalua
   
-  public static	void EvaluaHillClimber() throws Exception{
+  //Método Evalua() modificado para ocuparlo con el Hill Climbing algorithm
+  public static	void EvaluaHillClimber() throws Exception{ //utilizamos los atributos en lugar de parámetros, por facilidad.
 	String OutTape;
 	double Solos,Pares,Triadas,Cuartetas;
 	boolean FF2,FF3,FF4;
@@ -349,6 +350,7 @@ static String temp;
 	
         nBit=-1; while (nBit<0|nBit>=LG) nBit=(int)(RandN.nextFloat()*LG);
 /*
+ * Cambiamos un bit al azar del genoma actual en el hill climbing algorithm
  *		** Mutation **
  */
         char mBit='0';
@@ -356,10 +358,12 @@ static String temp;
                 
         if (G.substring(nBit,nBit+1).equals("0")) mBit='1';
         
-        char [] F=G.toCharArray();
+        char [] F=G.toCharArray(); //convertimos el string a un arreglo para poder manipularlo mejos
+        
         F[nBit]=mBit;
+        
         genomaHC="";
-        for (int i=0;i<G.length();i++)
+        for (int i=0;i<G.length();i++)  // convertimos el arreglo de tipo char en un string de regreso en la varible del genoma del hill climbing algorithm
             genomaHC=genomaHC.concat(F[i]+"");
         
   }//endMutaHillClimber
@@ -434,7 +438,9 @@ static String temp;
 	 	System.out.println("\t******************************************\n");
 		return;
 	}//endMethod
-   public static void ResultadosDeLaCorridaHillClimber(String Elite) throws Exception {
+   
+   // algoritmo modificado de ResultadosDeLaCorrida() para utilizarse en el hill climbing algorithm
+   public static void ResultadosDeLaCorridaHillClimber(String Elite) throws Exception { //utilizamos el atributo en lugar del parámetro por facilidad
 /*
  *		EL MEJOR AJUSTE
  */
@@ -487,7 +493,7 @@ static String temp;
 	 ModiParams();							//Modifica valores
 	 CalcParams();							//Calcula parametros
 	 UpdateParams();						//Graba en archivo
-         System.out.println("\n\nDesea ocupar un AG o un HC (A/H)");
+         System.out.println("\n\nDesea ocupar un AG o un HC (A/H)");    //Pregunta que algoritmo se desea ocupar 
 	 String Resp=Kbr.readLine().toUpperCase();
          boolean algG=false;
 	 if (Resp.equals("A")){ algG=true;}
@@ -549,8 +555,8 @@ static String temp;
                    BestTapeMatch="";
                    for (int i=0;i<G*N;i++){
                            MutaHillClimber();			//Muta un elemento del genoma 
-                           EvaluaHillClimber();				//Evalua los primeros N
-                           if(fitnessHC>BestFitness){
+                           EvaluaHillClimber();				//Evalua el genoma actual
+                           if(fitnessHC>BestFitness){                   
                                EliteHC=genomaHC;
                                BestFitness=fitnessHC;
                            }
@@ -562,7 +568,7 @@ static String temp;
                            }//endIf
                            System.out.printf("Individual %8.0f\tMatches %8.0f\n",(float)i,(float)BestSingleMatches);
                     }//endFor
-                    if (!BestFound){		 	
+                    if (!BestFound){		 	//dependiendo de si se encontró la cadena completa o no saca los resultados de la corrida
                            ResultadosDeLaCorridaHillClimber(EliteHC);
                     }
                     else{
